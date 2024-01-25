@@ -8,6 +8,7 @@ import net.fabricmc.loader.api.MappingResolver;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -52,9 +53,11 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
         for (MethodNode methodNode : targetClass.methods) {
             if (methodNode.name.equals("<init>")) {
                 for (AbstractInsnNode abstractInsnNode : methodNode.instructions.toArray()) {
-                    if (abstractInsnNode.getOpcode() == Opcodes.ATHROW) {
-                        methodNode.instructions.insertBefore(abstractInsnNode, new VarInsnNode(Opcodes.ALOAD, 0));
-                        methodNode.instructions.set(abstractInsnNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "io/github/zekerzhayard/iie_identifier/IIE_Identifier", "checkValid", "(Ljava/lang/RuntimeException;L" + mappingResolver.mapClassName("intermediary", "net.minecraft.class_2960").replace('.', '/') + ";)V", false));
+                    if (abstractInsnNode.getOpcode() == Opcodes.PUTFIELD) {
+                        FieldInsnNode fieldInsnNode = (FieldInsnNode) abstractInsnNode;
+                        if (fieldInsnNode.owner.equals(mappingResolver.mapClassName("intermediary", "net.minecraft.class_2960").replace('.', '/')) && fieldInsnNode.name.equals(mappingResolver.mapFieldName("intermediary", "net.minecraft.class_2960", "field_13355", "Ljava/lang/String;")) && fieldInsnNode.desc.equals("Ljava/lang/String;")) {
+                            methodNode.instructions.insertBefore(abstractInsnNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "io/github/zekerzhayard/iie_identifier/IIE_Identifier", "removeIncorrectPath", "(Ljava/lang/String;)Ljava/lang/String;", false));
+                        }
                     }
                 }
             }
