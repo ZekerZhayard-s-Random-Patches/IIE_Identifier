@@ -1,0 +1,17 @@
+{
+    "schemaVersion": 1,
+    "id": "iie_identifier",
+    "version": "${version}",
+    "name": "IIE_Identifier",
+    "description": "",
+    "authors": [
+        "ZekerZhayard"
+    ],
+    "contact": {},
+    "license": "All-Rights-Reserved",
+    "icon": "assets/iie_identifier/icon.png",
+    "environment": "*",
+    "mixins": [
+        "mixins.iie_identifier.json"
+    ]
+}
